@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { Post } from '../components/post.component'
 
-import { connect } from 'react-redux'
-import { fetchPostsAsync } from '../redux/posts/posts.actions'
-import { createStructuredSelector } from 'reselect'
-import {
-  selectPostCollection,
-  selectIsFetching,
-  selectErrorMessage,
-} from '../redux/posts/posts.selectors'
+import { fetchPostsAsync, selectPosts } from '../slices/posts'
 
-const PostsPage = ({ postCollection, isFetching, errorMessage, dispatch }) => {
+const PostsPage = () => {
+  const dispatch = useDispatch()
+  const { postCollection, isFetching, errorMessage } = useSelector(selectPosts)
+
   useEffect(() => {
     dispatch(fetchPostsAsync())
   }, [dispatch])
@@ -31,10 +28,4 @@ const PostsPage = ({ postCollection, isFetching, errorMessage, dispatch }) => {
   )
 }
 
-const mapStateToProps = createStructuredSelector({
-  postCollection: selectPostCollection,
-  isFetching: selectIsFetching,
-  errorMessage: selectErrorMessage,
-})
-
-export default connect(mapStateToProps)(PostsPage)
+export default PostsPage
