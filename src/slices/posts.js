@@ -1,3 +1,4 @@
+import Axios from 'axios'
 import { createSlice } from '@reduxjs/toolkit'
 
 export const initialState = {
@@ -13,8 +14,8 @@ const postsSlice = createSlice({
     fetchPostsStart: state => {
       state.loading = true
     },
-    fetchPostsSuccess: (state, { payload }) => {
-      state.postCollection = payload
+    fetchPostsSuccess: (state, { payload: { postsCollection } }) => {
+      state.postCollection = postsCollection
       state.loading = false
       state.errorMessage = ''
     },
@@ -33,12 +34,11 @@ export const fetchPostsAsync = () => async dispatch => {
   dispatch(fetchPostsStart())
 
   try {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
-    const data = await response.json()
+    const res = await Axios.get('https://jsonplaceholder.typicode.com/posts')
 
-    dispatch(fetchPostsSuccess(data))
+    dispatch(fetchPostsSuccess({ postsCollection: res.data }))
   } catch (error) {
-    dispatch(fetchPostsFailure())
+    dispatch(fetchPostsFailure(error.message))
   }
 }
 
